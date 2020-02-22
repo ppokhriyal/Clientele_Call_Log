@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+{% block content %}
+<fieldset class="form-group">
+	<legend class="border-bottom pb-2">
+        <span class="fab fa-searchengin ml-auto" aria-hidden="true"></span>
+          Search Clientele Calls Summary
+		<form class="form-inline float-right" method="POST" action="http://localhost:5000/search_client">
+			<div class="form-group">
+    			<input type="text" name="searchclient" class=" form-control form-control" id="search_input" placeholder="Search Clientele ...">
+    		</div>
+    		<button type="submit" class="btn btn-primary btn ml-2 ">Search</button>
+		</form>
+	</legend>
+</fieldset>
+{% endblock content %}

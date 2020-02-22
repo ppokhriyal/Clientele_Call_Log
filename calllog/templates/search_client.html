@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+{% block content %}
+	{% if count_search == 0 %}
+		<fieldset class="form-group">
+			<legend class="border-bottom pb-2">
+        		<span class="fab fa-searchengin ml-auto" aria-hidden="true"></span>
+          		Search Clientele Calls Summary
+				<form class="form-inline float-right" method="POST" action="http://localhost:5000/search_client">
+					<div class="form-group">
+    					<input type="text" name="searchclient" class=" form-control form-control" id="search_input" placeholder="Search Clientele ...">
+    				</div>
+    				<button type="submit" class="btn btn-primary btn ml-2 ">Search</button>
+				</form>
+			</legend>
+		</fieldset>
+		<p class="text-danger">Error : Search Result Not Found</p>
+	{% else %}
+		<fieldset class="form-group">
+			<legend class="border-bottom pb-2">
+        		<span class="fab fa-searchengin ml-auto" aria-hidden="true"></span>
+          		Search Clientele Calls Summary
+				<form class="form-inline float-right" method="POST" action="http://localhost:5000/search_client">
+					<div class="form-group">
+    					<input type="text" name="searchclient" class=" form-control form-control" id="search_input" placeholder="Search Clientele ...">
+    				</div>
+    				<button type="submit" class="btn btn-primary btn ml-2 ">Search</button>
+				</form>
+			</legend>
+		</fieldset>
+		<p class="text-success">Search Result Found : {{search_text}} [ {{count_search}} ]</p>
+		{% for post in callposts.items %}
+		<div class="card bg-light mb-3">
+  			<div class="card-header">
+  				<h5><a class="card-title text-dark" href="{{url_for('edit_callpost',callpost_id=post.id)}}">{{post.client_name}}</a></h5>
+  			</div>
+  			<div class="card-body">
+    			<h6>{{post.title}}</h6>
+          <div class="border-top pt-2"></div>
+    			<p class="card-text">{{post.content | safe }}</p>
+          <div class="border-top pt-2"></div>
+          <h6>Call Attendees</h6>
+          <p class="card-text text-muted">{{post.client_attendies | safe }}</p>
+  			</div>
+  			<div class="card-footer text-muted">
+    			Posted by : <a href="">{{post.author.username}}</a> | Posted on : {{post.date_posted.strftime('%d-%m-%Y')}}
+  			</div>
+		</div>
+	{% endfor %}
+	<div class="rounded-0 col-lg-13 mx-auto">
+    	{% for page_num in callposts.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2) %}
+      		{% if page_num %}
+        		{% if callposts.page == page_num %}
+          			<a class="btn btn-info mb-4 mt-2" href="{{ url_for('home',page=page_num)}}">{{ page_num }}</a>
+        		{% else %}
+          			<a class="btn btn-outline-info mb-4 mt-2" href="{{ url_for('home',page=page_num)}}">{{ page_num }}</a>
+        		{% endif %}  
+      		{% else %}
+        		...
+      		{% endif %}
+    	{% endfor %}
+   </div>
+	{% endif %}
+{% endblock content %}

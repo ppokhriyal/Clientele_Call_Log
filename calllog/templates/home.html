@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block content %}
+	{% if len_callpost == 0 %}
+		<div class=" container justify-center">
+			<h1 class="text-center text-info display-3">Hey ! Welcome</h1>
+			<p class="text-center text-muted">Start recording your Clientele calls summary.</p>
+		</div>
+	{% else %}
+	{% for post in callposts.items %}
+		<div class="card bg-light mb-3">
+  			<div class="card-header">
+  				<h5><a class="card-title text-dark" href="{{url_for('edit_callpost',callpost_id=post.id)}}">{{post.client_name}}</a></h5>
+  			</div>
+  			<div class="card-body">
+    			<h6>{{post.title}}</h6>
+          <div class="border-top pt-2"></div>
+    			<p class="card-text">{{post.content | safe }}</p>
+          <div class="border-top pt-2"></div>
+          <h6>Call Attendees</h6>
+          <p class="card-text text-muted text-capitalize">{{post.client_attendies | safe }}</p>
+  			</div>
+  			<div class="card-footer text-muted">
+    			Posted by : <a href="">{{post.author.username}}</a> | Posted on : {{post.date_posted.strftime('%d-%m-%Y')}}
+  			</div>
+		</div>
+	{% endfor %}
+	<div class="rounded-0 col-lg-13 mx-auto">
+    	{% for page_num in callposts.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2) %}
+      		{% if page_num %}
+        		{% if callposts.page == page_num %}
+          			<a class="btn btn-info mb-4 mt-2" href="{{ url_for('home',page=page_num)}}">{{ page_num }}</a>
+        		{% else %}
+          			<a class="btn btn-outline-info mb-4 mt-2" href="{{ url_for('home',page=page_num)}}">{{ page_num }}</a>
+        		{% endif %}  
+      		{% else %}
+        		...
+      		{% endif %}
+    	{% endfor %}
+   </div>
+	{% endif %}
+{% endblock content %}

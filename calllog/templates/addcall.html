@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+  <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    {{form.csrf_token }}
+
+    <fieldset class="form-group">
+      <legend class="border-bottom">
+        <span class="fab fa-stack-exchange ml-auto" aria-hidden="true"></span>
+          {{legend_title}}
+      </legend>
+    </fieldset>
+
+    <div class="form-group">
+      {{ form.title.label(class="form-control-label") }}
+      {% if form.title.errors %}
+        {{ form.title(class="form-control is-invalid") }}
+          <div class="invalid-feedback">
+            {% for error in form.title.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+      {% else %}
+        {{ form.title(class="form-control form-control-sm col-sm") }}
+      {% endif %}  
+    </div>
+
+    <div class="form-group">
+      {{ form.client_name.label(class="form-control-label") }}
+      {% if form.client_name.errors %}
+        {{ form.client_name(class="form-control is-invalid") }}
+          <div class="invalid-feedback">
+            {% for error in form.client_name.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+      {% else %}
+        {{ form.client_name(class="form-control form-control-sm col-sm") }}
+      {% endif %}  
+    </div>
+
+    <div class="form-group w-60 h-50">
+      {{ form.summary.label(class="form-control-label") }}
+      {% if form.summary.errors %}
+        {{ form.summary(class="form-control is-invalid") }}
+          <div class="invalid-feedback">
+            {% for error in form.summary.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+      {% else %}
+        {{ form.summary(class="form-control ") }}
+      {% endif %}  
+    </div>
+
+    <div class="form-group">
+      {{ form.call_attendies.label(class="form-control-label")}}
+      <small class="text-muted">, write ' : ' seprated call attendees names .</small>
+      {{ form.call_attendies(class="form-control ")}}
+      
+    </div>
+    <div class="form-group mt-2">
+      {{ form.submit(class="btn btn-primary")}}
+      <a class="btn btn-warning" href="{{url_for('home')}}">Cancel</a>     
+    </div>
+
+  </form>
+</div>
+    
+    		
+{% endblock content %}
