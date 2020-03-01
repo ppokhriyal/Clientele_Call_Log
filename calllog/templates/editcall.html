@@ -2,7 +2,7 @@
 {% block content %}
 		<div class="card bg-light mb-3">
   			<div class="card-header">
-  				<h5>{{callpost.client_name}}</h5>
+  				<h5 class="card-title text-dark font-weight-bold">{{callpost.client_name}}</h5>
   			</div>
   			<div class="card-body">
     			<h6 class="article-title">{{callpost.title}}</h6>
@@ -10,15 +10,17 @@
     			<p class="card-text">{{callpost.content | safe }}</p>
           <div class="border-top pt-2"></div>
           <h6>Call Attendees</h6>
-          <p class="card-text text-muted">{{callpost.client_attendies | safe }}</p>
+          <small><p class="card-text text-capitalize">{{callpost.client_attendies | safe }}</p></small>
   			</div>
   			<div class="card-footer text-muted">
-    			Posted by : <a href="">{{callpost.author.username}}</a> | Posted on : {{callpost.date_posted.strftime('%d-%m-%Y')}}
+    			<small class="text-secondary">Posted by : <a class="text-decoration-none" href="">{{callpost.author.username}}</a> | Posted on : {{callpost.date_posted.strftime('%d-%m-%Y')}}</small>
   			</div>
 		</div>
     {% if callpost.author == current_user %}
+      <!--<a class="btn btn-primary btn-sm mt-1 mb-1 float-left" href="{{ url_for('update_callpost',callpost_id=callpost.id) }}">Continue</a>-->
       <a class="btn btn-secondary btn-sm mt-1 mb-1 float-right" href="{{ url_for('update_callpost',callpost_id=callpost.id) }}">Update</a>
       <button type="button" class="btn btn-danger btn-sm m-1 float-right" data-toggle="modal" data-target="#DeleteModal">Delete</button>
+
     {% endif %}
      <!-- Modal -->
         <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="DeleteModal" aria-hidden="true">

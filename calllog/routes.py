@@ -128,10 +128,23 @@ def update_callpost(callpost_id):
 		flash('Clientele Call Summary Updated !','success')
 		return redirect(url_for('home'))
 	elif request.method == 'GET':
-		
+		html = markdown.markdown(callpost.content,extensions=['nl2br'],safe_mode=True,output_format='html5')
+		#Tags
+		allowed_tags = [
+		'a','abbr','acronym','b','blockquote','code',
+		'em','i','li','ol','pre','strong','ul','img',
+		'h1','h2','h3','p','br'
+		]
+		#Attributes
+		allowed_attrs = {
+		'*':['class'],
+		'a':['href','rel'],
+		'img':['src','alt']
+		}
+		html_sanitized = bleach.clean(bleach.linkify(html),tags=allowed_tags,attributes=allowed_attrs)
 		form.title.data = callpost.title
 		form.client_name.data = callpost.client_name
-		form.summary.data = callpost.content
+		form.summary.data = html_sanitized
 		form.call_attendies.data = callpost.client_attendies
 
 	return render_template('addcall.html',title='Update Call Summary',form=form,legend_title='Update Clientele Call Summary')

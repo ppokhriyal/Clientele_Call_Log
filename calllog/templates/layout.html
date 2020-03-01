@@ -17,6 +17,7 @@
       {{mde.css}}
      <!--Markdown JS-->
      {{mde.js}}
+ 
 
     {% if title %}
       <title>VXL Clientele Calllog : {{title}}</title>
@@ -45,13 +46,15 @@
                   <a class="nav-link" href="{{url_for('home')}}">Home</a>
                 </li>
               {% endif %}
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Call Summary</a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                     <a class="dropdown-item" href="{{url_for('addcall')}}">Add New</a>
-                     <a class="dropdown-item" href="#">Continue</a>
-                  </div>
+              {% if title == 'Add Call Summary' %}
+                <li class="nav-item active">
+                  <a class="nav-link" href="{{url_for('addcall')}}">Add Call Summary</a>
                 </li>
+                {% else %}
+                  <li class="nav-item">
+                  <a class="nav-link" href="{{url_for('addcall')}}">Add Call Summary</a>
+                </li>
+                {% endif %}
             
               {% if title == 'Search' %}
                 <li class="nav-item active">

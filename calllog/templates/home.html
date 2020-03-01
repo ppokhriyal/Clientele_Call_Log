@@ -9,18 +9,18 @@
 	{% for post in callposts.items %}
 		<div class="card bg-light mb-3">
   			<div class="card-header">
-  				<h5><a class="card-title text-dark" href="{{url_for('edit_callpost',callpost_id=post.id)}}">{{post.client_name}}</a></h5>
+  				<h5><a class="card-title text-dark font-weight-bold" href="{{url_for('edit_callpost',callpost_id=post.id)}}">{{post.client_name}}</a></h5>
   			</div>
   			<div class="card-body">
-    			<h6>{{post.title}}</h6>
+    			<h6 class="">{{post.title}}</h6>
           <div class="border-top pt-1"></div>
-    			<p class="card-text line-height:1.7em">{{post.content | safe }}</p>
+    			<p class="card-text line-height:1.7em text-monospace">{{post.content | safe }}</p>
           <div class="border-top pt-2"></div>
-          <h6>Call Attendees</h6>
-          <p class="card-text text-muted text-capitalize">{{post.client_attendies | safe }}</p>
+          <h6 class="">Call Attendees</h6>
+          <small><p class="card-text text-capitalize">{{post.client_attendies | safe }}</p></small>
   			</div>
   			<div class="card-footer text-muted">
-    			Posted by : <a href="">{{post.author.username}}</a> | Posted on : {{post.date_posted.strftime('%d-%m-%Y')}}
+    			<small class="text-secondary">Posted by : <a href="">{{post.author.username}}</a> | Posted on : {{post.date_posted.strftime('%d-%m-%Y')}}</small>
   			</div>
 		</div>
 	{% endfor %}
