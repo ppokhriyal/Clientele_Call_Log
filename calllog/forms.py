@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_mde import Mde, MdeField
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
@@ -38,9 +39,9 @@ class RegistrationForm(FlaskForm):
            raise ValidationError('That email is taken. Please choose a diffrent one.')
 
 class CallLogSummary(FlaskForm):
-    title = StringField('Call Title',validators=[DataRequired()])
+    title = StringField('Title',validators=[DataRequired()])
     client_name = StringField('Client Name',validators=[DataRequired()])
-    summary = TextAreaField('Call Summary',validators=[DataRequired(),Length(min=100,max=30000)])
+    summary = MdeField('Call Summary',validators=[InputRequired("Input Required"),Length(min=50,max=30000)])
     call_attendies = TextAreaField('Call Attendees')
     submit = SubmitField('Post')
     cancel = SubmitField('Cancel')

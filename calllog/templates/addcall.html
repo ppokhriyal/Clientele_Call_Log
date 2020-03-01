@@ -12,19 +12,6 @@
       </legend>
     </fieldset>
 
-    <div class="form-group">
-      {{ form.title.label(class="form-control-label") }}
-      {% if form.title.errors %}
-        {{ form.title(class="form-control is-invalid") }}
-          <div class="invalid-feedback">
-            {% for error in form.title.errors %}
-              <span>{{ error }}</span>
-            {% endfor %}
-          </div>
-      {% else %}
-        {{ form.title(class="form-control form-control-sm col-sm") }}
-      {% endif %}  
-    </div>
 
     <div class="form-group">
       {{ form.client_name.label(class="form-control-label") }}
@@ -39,6 +26,21 @@
         {{ form.client_name(class="form-control form-control-sm col-sm") }}
       {% endif %}  
     </div>
+    
+    <div class="form-group">
+      {{ form.title.label(class="form-control-label") }}
+      {% if form.title.errors %}
+        {{ form.title(class="form-control is-invalid") }}
+          <div class="invalid-feedback">
+            {% for error in form.title.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+      {% else %}
+        {{ form.title(class="form-control form-control-sm col-sm") }}
+      {% endif %}  
+    </div>
+
 
     <div class="form-group w-60 h-50">
       {{ form.summary.label(class="form-control-label") }}

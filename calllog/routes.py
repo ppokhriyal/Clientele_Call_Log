@@ -1,5 +1,10 @@
+import os
+import markdown
+import bleach
+from bleach.sanitizer import Cleaner
+import secrets
 from flask import render_template, url_for, flash, redirect, request, abort, session, jsonify
-from calllog import app, db, bcrypt, login_manager
+from calllog import app, db, bcrypt, login_manager, mde
 from calllog.forms import LoginForm, RegistrationForm, CallLogSummary
 from calllog.models import User,CallPost
 from flask_login import login_user, current_user, logout_user, login_required
@@ -49,7 +54,29 @@ def register():
 def addcall():
 	form = CallLogSummary()
 	if form.validate_on_submit():
-		callpost = CallPost(title=form.title.data,client_name=form.client_name.data,content=form.summary.data,author=current_user,client_attendies=form.call_attendies.data)
+
+		session['content'] = request.form['summary']
+		html = markdown.markdown(request.form['summary'],extensions=['nl2br'],safe_mode=True,output_format='html5')
+		#Tags
+		allowed_tags = [
+		'a','abbr','acronym','b','blockquote','code',
+		'em','i','li','ol','pre','strong','ul','img',
+		'h1','h2','h3','p','br'
+		]
+		#Attributes
+		allowed_attrs = {
+		'*':['class'],
+		'a':['href','rel'],
+		'img':['src','alt']
+		}
+		#Sanitize HTML
+		html_sanitized = bleach.clean(
+			bleach.linkify(html),
+			tags=allowed_tags,
+			attributes=allowed_attrs
+			)
+
+		callpost = CallPost(title=form.title.data,client_name=form.client_name.data,content=html_sanitized,author=current_user,client_attendies=form.call_attendies.data)
 		db.session.add(callpost)
 		db.session.commit()
 		flash('Call Summary Created !','success')
@@ -71,12 +98,32 @@ def update_callpost(callpost_id):
 
 	if callpost.author != current_user:
 		abort(403)
-
 	form = CallLogSummary()
+
 	if form.validate_on_submit():
 		callpost.title = form.title.data
-		callpost.content = form.summary.data
+		html = markdown.markdown(request.form['summary'],extensions=['nl2br'],safe_mode=True,output_format='html5')
+		#Tags
+		allowed_tags = [
+		'a','abbr','acronym','b','blockquote','code',
+		'em','i','li','ol','pre','strong','ul','img',
+		'h1','h2','h3','p','br'
+		]
+		#Attributes
+		allowed_attrs = {
+		'*':['class'],
+		'a':['href','rel'],
+		'img':['src','alt']
+		}
+		#Sanitize HTML
+		html_sanitized = bleach.clean(
+			bleach.linkify(html),
+			tags=allowed_tags,
+			attributes=allowed_attrs
+			)
+		callpost.content = html_sanitized
 		callpost.client_name = form.client_name.data
+
 		db.session.commit()
 		flash('Clientele Call Summary Updated !','success')
 		return redirect(url_for('home'))
