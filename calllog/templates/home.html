@@ -14,13 +14,13 @@
   			<div class="card-body">
     			<h6 class="">{{post.title}}</h6>
           <div class="border-top pt-1"></div>
-    			<p class="card-text line-height:1.7em text-monospace">{{post.content | safe }}</p>
+    			<p class="card-text line-height:1.7em">{{post.content | safe }}</p>
           <div class="border-top pt-2"></div>
           <h6 class="">Call Attendees</h6>
           <small><p class="card-text text-capitalize">{{post.client_attendies | safe }}</p></small>
   			</div>
-  			<div class="card-footer text-muted">
-    			<small class="text-secondary">Posted by : <a href="">{{post.author.username}}</a> | Posted on : {{post.date_posted.strftime('%d-%m-%Y')}}</small>
+  			<div class="card-footer">
+    			<small class="text-secondary text-dark">Posted by : <a href="">{{post.author.username}}</a>  | Posted on : {{post.date_posted.strftime('%d-%m-%Y')}} | Call held on : {{post.date_call.strftime('%d-%m-%Y')}} </small>
   			</div>
 		</div>
 	{% endfor %}

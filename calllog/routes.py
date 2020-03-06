@@ -9,6 +9,9 @@ from calllog.forms import LoginForm, RegistrationForm, CallLogSummary
 from calllog.models import User,CallPost
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy import func
+from datetime import datetime
+import subprocess
+import re
 
 #Home Page
 @app.route('/')
@@ -41,12 +44,30 @@ def register():
 	form = RegistrationForm()
 	if form.validate_on_submit():
 		hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-		user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+		user = User(username=form.username.data, email=form.email.data, password=hashed_password,password_decrypted=form.password.data)
 		db.session.add(user)
 		db.session.commit()
 		flash(f'Your Account has been created! You are now able to login','success')
 		return redirect(url_for('login'))
 	return render_template('register.html',title='Register',form=form)
+
+TAG_RE = re.compile(r'<[^>]+>')
+#Email Call Post
+def send_email(author,subject,clientname,summary,call_attendies,calldate):
+	
+	user = User.query.filter_by(username=current_user.username).first()
+	send_to = "vxlos.vxlsoftware.com"
+	send_from = user.email
+	server_mail = "mail.vxlsoftware.com"
+	user_password = user.password_decrypted
+	call_summary = TAG_RE.sub('',summary)
+
+	msg_body = f'"Hello All,\n Please find the below Call Summary of {clientname}\n\n Client Name : {clientname}\n\n Call Agengda : {subject}\n\nCall Date 	: {calldate}\n\nCall Attendees : {call_attendies}\n\nCall Summary:\n\n{call_summary}\n\n\n Please Check the below link for Client Summary in detail : \n http://192.168.2.240:5000\n\nThanks and Regards\n{user.username}"'
+	cmd = "/usr/bin/swaks --to "+send_to+" --from "+send_from+" --server "+server_mail+" --auth LOGIN --auth-user "+send_from+" --auth-password "+user_password+" -tls"+" --header "+"'Subject: Call Summary : '"+clientname+" --body "+msg_body
+	proc = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	o = proc.communicate()
+	return print(o)
+	return print(cmd)
 
 #Add Call Log Summary
 @app.route('/addcalllog/new',methods=['GET','POST'])
@@ -76,10 +97,12 @@ def addcall():
 			attributes=allowed_attrs
 			)
 
-		callpost = CallPost(title=form.title.data,client_name=form.client_name.data,content=html_sanitized,author=current_user,client_attendies=form.call_attendies.data)
+		callpost = CallPost(title=form.title.data,client_name=form.client_name.data,content=html_sanitized,author=current_user,client_attendies=form.call_attendies.data,date_call=form.date_call.data)
+		send_email(author=current_user,subject=form.title.data,clientname=form.client_name.data,summary=html_sanitized,call_attendies=form.call_attendies.data,calldate=form.date_call.data.strftime('%d-%m-%Y'))
 		db.session.add(callpost)
 		db.session.commit()
 		flash('Call Summary Created !','success')
+		
 		return redirect(url_for('home'))
 
 	return render_template('addcall.html',title='Add Call Summary',form=form,legend_title='Add Clientele Call Summary')
@@ -177,10 +200,11 @@ def search():
 def check_search():
 
 	if request.method == "POST":
+		clientele_name = request.form['searchclient']
 		page = request.args.get('page',1,type=int)
-		count_search = db.session.query(CallPost).filter(func.lower(CallPost.client_name) == func.lower(request.form['searchclient'])).count()
-		callposts = db.session.query(CallPost).filter(func.lower(CallPost.client_name) == func.lower(request.form['searchclient'])).paginate(page=page,per_page=4)
-
+		count_search = len(db.session.query(CallPost).filter(CallPost.client_name.like(f'%{clientele_name}%')).all())
+		callposts = db.session.query(CallPost).filter(CallPost.client_name.like(f'%{clientele_name}%')).paginate(page=page,per_page=4)
+		
 	return render_template('search_client.html',count_search=count_search,title='Search',search_text=request.form['searchclient'].upper(),callposts=callposts)
 
 

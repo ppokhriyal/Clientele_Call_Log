@@ -13,7 +13,7 @@
           <small><p class="card-text text-capitalize">{{callpost.client_attendies | safe }}</p></small>
   			</div>
   			<div class="card-footer text-muted">
-    			<small class="text-secondary">Posted by : <a class="text-decoration-none" href="">{{callpost.author.username}}</a> | Posted on : {{callpost.date_posted.strftime('%d-%m-%Y')}}</small>
+    			<small class="text-secondary text-dark">Posted by : <a class="text-decoration-none" href="">{{callpost.author.username}}</a> | Posted on : {{callpost.date_posted.strftime('%d-%m-%Y')}} | Call held on : {{callpost.date_call.strftime('%d-%m-%Y')}}</small>
   			</div>
 		</div>
     {% if callpost.author == current_user %}
