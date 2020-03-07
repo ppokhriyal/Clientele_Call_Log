@@ -56,13 +56,24 @@ TAG_RE = re.compile(r'<[^>]+>')
 def send_email(author,subject,clientname,summary,call_attendies,calldate):
 	
 	user = User.query.filter_by(username=current_user.username).first()
-	send_to = "vxlos.vxlsoftware.com"
+	#send_to = "vxlos.vxlsoftware.com"
+	send_to = user.email
 	send_from = user.email
 	server_mail = "mail.vxlsoftware.com"
 	user_password = user.password_decrypted
 	call_summary = TAG_RE.sub('',summary)
+	call_attend_by = call_attendies.title()
 
-	msg_body = f'"Hello All,\n Please find the below Call Summary of {clientname}\n\n Client Name : {clientname}\n\n Call Agengda : {subject}\n\nCall Date 	: {calldate}\n\nCall Attendees : {call_attendies}\n\nCall Summary:\n\n{call_summary}\n\n\n Please Check the below link for Client Summary in detail : \n http://192.168.2.240:5000\n\nThanks and Regards\n{user.username}"'
+	msg_body = f'''"Hello All,
+Please find the below Call Summary of {clientname}\n
+Client Name  	: {clientname}
+Call Agengda    : {subject}
+Call Date 	    : {calldate}
+Call Attendees 	: {call_attend_by}\n
+Call Summary:
+{call_summary}\n
+Please Check the below link for Client Summary in detail : \n http://192.168.2.240:5000\n\nThanks and Regards\n{user.username}"'''
+
 	cmd = "/usr/bin/swaks --to "+send_to+" --from "+send_from+" --server "+server_mail+" --auth LOGIN --auth-user "+send_from+" --auth-password "+user_password+" -tls"+" --header "+"'Subject: Call Summary : '"+clientname+" --body "+msg_body
 	proc = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	o = proc.communicate()
@@ -97,8 +108,14 @@ def addcall():
 			attributes=allowed_attrs
 			)
 
-		callpost = CallPost(title=form.title.data,client_name=form.client_name.data,content=html_sanitized,author=current_user,client_attendies=form.call_attendies.data,date_call=form.date_call.data)
-		send_email(author=current_user,subject=form.title.data,clientname=form.client_name.data,summary=html_sanitized,call_attendies=form.call_attendies.data,calldate=form.date_call.data.strftime('%d-%m-%Y'))
+		#Check for Call Attendees
+		if not form.call_attendies.data:
+			call_attend_by = current_user.username.title()
+		else:
+			call_attend_by = form.client_attendies.data.title()
+
+		callpost = CallPost(title=form.title.data,client_name=form.client_name.data,content=html_sanitized,author=current_user,client_attendies=call_attend_by,date_call=form.date_call.data)
+		send_email(author=current_user,subject=form.title.data,clientname=form.client_name.data,summary=html_sanitized,call_attendies=call_attend_by,calldate=form.date_call.data.strftime('%d-%m-%Y'))
 		db.session.add(callpost)
 		db.session.commit()
 		flash('Call Summary Created !','success')
