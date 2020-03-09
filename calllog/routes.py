@@ -56,8 +56,8 @@ TAG_RE = re.compile(r'<[^>]+>')
 def send_email(author,subject,clientname,summary,call_attendies,calldate):
 	
 	user = User.query.filter_by(username=current_user.username).first()
-	#send_to = "vxlos.vxlsoftware.com"
-	send_to = user.email
+	send_to = "vxlos.vxlsoftware.com"
+	#send_to = user.email
 	send_from = user.email
 	server_mail = "mail.vxlsoftware.com"
 	user_password = user.password_decrypted
@@ -112,7 +112,7 @@ def addcall():
 		if not form.call_attendies.data:
 			call_attend_by = current_user.username.title()
 		else:
-			call_attend_by = form.client_attendies.data.title()
+			call_attend_by = form.call_attendies.data.title()
 
 		callpost = CallPost(title=form.title.data,client_name=form.client_name.data,content=html_sanitized,author=current_user,client_attendies=call_attend_by,date_call=form.date_call.data)
 		send_email(author=current_user,subject=form.title.data,clientname=form.client_name.data,summary=html_sanitized,call_attendies=call_attend_by,calldate=form.date_call.data.strftime('%d-%m-%Y'))
@@ -186,6 +186,7 @@ def update_callpost(callpost_id):
 		form.client_name.data = callpost.client_name
 		form.summary.data = html_sanitized
 		form.call_attendies.data = callpost.client_attendies
+		form.date_call.data = callpost.date_call
 
 	return render_template('addcall.html',title='Update Call Summary',form=form,legend_title='Update Clientele Call Summary')
 
