@@ -221,6 +221,9 @@ def check_search():
 		clientele_name = request.form['searchclient']
 		page = request.args.get('page',1,type=int)
 		count_search = len(db.session.query(CallPost).filter(CallPost.client_name.like(f'%{clientele_name}%')).all())
+		if len(clientele_name) == 0:
+			count_search = 0
+			
 		callposts = db.session.query(CallPost).filter(CallPost.client_name.like(f'%{clientele_name}%')).paginate(page=page,per_page=4)
 		
 	return render_template('search_client.html',count_search=count_search,title='Search',search_text=request.form['searchclient'].upper(),callposts=callposts)
